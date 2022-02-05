@@ -44,8 +44,8 @@
             <!-- <nuxt-link to="#" class="buy-now buttons-mobile"
               >Buy now!</nuxt-link
             > -->
-            <nuxt-link to="#" class="place-bid buttons-mobile"
-              >Place a bid</nuxt-link
+            <nuxt-link to="/editor" class="place-bid buttons-mobile"
+              >Editor</nuxt-link
             >
           </div>
           <div class="history">
@@ -96,6 +96,7 @@
 export default {
   data() {
     return {
+      tokenIds: [],
       account: ['connect wallet'],
       metadata: 'connect wallet',
       address: 'connect wallet',
@@ -107,7 +108,31 @@ export default {
   },
   name: 'nftAbout',
   methods: {
+    async getTokens() {
+      // console.log(this.tokenIds)
+      // console.log(this.$accounts)
+      console.log(this.account[0])
+      try {
+        let result = await this.$contract.methods
+          .walletOfHolder(this.account[0])
+          .call()
+        this.tokenIds = result
+        console.log('result')
+        console.log(result)
+      } catch (error) {
+        console.log('Verify you are connected to the right network')
+        console.log(error)
+      }
+
+      console.log('tokens do owner')
+      console.log(typeof this.tokenIds[0])
+      console.log('route')
+      console.log(typeof this.$route.params.id)
+    },
     async connect() {
+      this.getTokens()
+      console.log(this.$route.params.id)
+      console.log()
       console.log('Current Block Number')
       this.$web3.eth.getBlockNumber().then(console.log)
       const val = await this.$contract.methods

@@ -21,7 +21,7 @@ export default async function (context, inject) {
 
     let contract = new web3.eth.Contract(
         artifacts.abi,
-        "0x652d852F761047A53Fdc84570005E9cC6F524906"
+        "0x4F2469aE3f2aAB4ce51ccff3c0f446A1fA427723"
         //updated_at 6/jan/22 17:49
     )
 
