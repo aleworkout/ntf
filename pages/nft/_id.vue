@@ -1,55 +1,92 @@
 <template>
-  <div class='page'>
-    <div class='content'>
-      <div class='header'>
-        <img src='~/assets/logo.png' alt=''>
-        <a href='/'>Home</a>
-        <a href='/home'>How it works</a>
-        <a href='/home'>FAQ</a>
-        <a href='/home'>Contacts</a>
+  <div class="page">
+    <div class="content">
+      <div class="header">
+        <img src="~/assets/logo.png" alt="" />
+        <a href="/">Home</a>
+        <a href="/home">How it works</a>
+        <a href="/home">FAQ</a>
+        <a href="/home">Contacts</a>
       </div>
-      <div class='about-block'>
-        <div class='about-block__block'>
-          <div class='block-elements'>
-            <h1 class='element-title'>TILES <br>#{{$route.params.id}}</h1>
-            <p class='element-des'>Participate in the auction for each tile. The buyer gets the opportunity to leave a message.</p>
-            <p class='element-des-2'>The tiles can be resold.</p>
+      <div>
+        <button @click="connect()" class="save-buttons__save">
+          Connect Wallet
+        </button>
+      </div>
+      <div class="about-block">
+        <div class="about-block__block">
+          <img :src="image" alt="" class="img-size" />
+          <div class="block-elements">
+            <h1 class="element-title">TILES <br />#{{ $route.params.id }}</h1>
+            <p class="element-des">
+              Participate in the auction for each tile. The buyer gets the
+              opportunity to leave a message.
+            </p>
+            <p class="element-des-2">The tiles can be resold.</p>
           </div>
         </div>
-        <div class='about-block__description'>
-          <h1 class='about-block-title'>TILE #{{$route.params.id}}</h1>
-          <div class='des-buttons'>
-            <div class='price'>
-              <p class='block-price'>0.1</p>
-              <p class='block-price-dollar'>$416</p>
-            </div>
-            <nuxt-link to='#' class='buy-now buttons-mobile'>Buy now!</nuxt-link>
-            <nuxt-link to='#' class='place-bid buttons-mobile'>Place a bid</nuxt-link>
-          </div>
-          <div class='history'>
+        <div class="about-block__description">
+          <h1 class="about-block-title">TILE #{{ $route.params.id }}</h1>
+          <div class="des-buttons">
+            <!-- <div class="price">
+              <p class="block-price">0.1</p>
+              <p class="block-price-dollar">$416</p>
+            </div> -->
 
-            <div class='history-item'>
-              <p>Owner: <span>1234512345</span></p>
-              <p>Contract Address: <span>1234512345</span></p>
-              <p>Metadata on Arweave: <span>1234512345</span></p>
-              <p>Token ID: <span>1234512345</span></p>
+            <a
+              :href="base_nft + $route.params.id"
+              target="_blank"
+              class="buy-now buttons-mobile"
+            >
+              See in OpenSea!
+            </a>
+
+            <!-- <nuxt-link to="#" class="buy-now buttons-mobile"
+              >Buy now!</nuxt-link
+            > -->
+            <nuxt-link to="#" class="place-bid buttons-mobile"
+              >Place a bid</nuxt-link
+            >
+          </div>
+          <div class="history">
+            <div class="history-item">
+              <p>
+                Owner: <span>{{ account[0] }}</span>
+              </p>
+              <p>
+                Contract Address: <span>{{ address }}</span>
+              </p>
+              <p>
+                Metadata on Arweave: <span>{{ metadata }}</span>
+              </p>
+              <p>
+                Token ID: <span>{{ $route.params.id }}</span>
+              </p>
             </div>
-            <h1 class='history-title'>HISTORY</h1>
-            <div class='history-blocks'>
-              <div v-for='i in 4' class='history-blocks__block'>
-                <img class='history-blocks__block-image' src='~/assets/user-icon.svg' alt=''>
-                <div class='history-blocks__block-content'>
-                  <p class='history-blocks__block-title'>Listed for <span>0.1 <img src='~/assets/eth.png' alt=''></span></p>
-                  <p class='history-blocks__block-des'>by a 12341234 1 hour ago</p>
+            <h1 class="history-title">HISTORY</h1>
+            <div class="history-blocks">
+              <div v-for="i in 4" class="history-blocks__block">
+                <img
+                  class="history-blocks__block-image"
+                  src="~/assets/user-icon.svg"
+                  alt=""
+                />
+                <div class="history-blocks__block-content">
+                  <p class="history-blocks__block-title">
+                    Listed for
+                    <span>0.1 <img src="~/assets/eth.png" alt="" /></span>
+                  </p>
+                  <p class="history-blocks__block-des">
+                    by a 12341234 1 hour ago
+                  </p>
                 </div>
               </div>
             </div>
           </div>
         </div>
       </div>
-
     </div>
-    <div class='footer'>
+    <div class="footer">
       <p>© 2021 10 Tiles LTD.</p>
     </div>
   </div>
@@ -57,16 +94,49 @@
 
 <script>
 export default {
-  name: 'nftAbout'
+  data() {
+    return {
+      account: ['connect wallet'],
+      metadata: 'connect wallet',
+      address: 'connect wallet',
+      image:
+        'https://github.com/aleworkout/eth-commands/blob/9301907fdab3302fa41f3201c8296746be530687/man.png',
+      base_nft:
+        'https://opensea.io/assets/matic/0x81073b56960467c8c356a377bfafcb080d024a2e/',
+    }
+  },
+  name: 'nftAbout',
+  methods: {
+    async connect() {
+      console.log('Current Block Number')
+      this.$web3.eth.getBlockNumber().then(console.log)
+      const val = await this.$contract.methods
+        .tokenURI(this.$route.params.id)
+        .call()
+      console.log(val)
+
+      this.address = await this.$contract._address
+
+      const image = await this.$axios.$get(
+        `https://arweave.net/${val.slice(5)}`
+      )
+      this.image = image.image
+      this.metadata = val
+      this.account = this.$accounts
+
+      console.log(image.image)
+      console.log(this.$accounts)
+    },
+  },
 }
 </script>
 
 <style lang='scss'>
-.page{
+.page {
   min-height: 100vh;
   height: 100%;
-  background: rgb(9,9,126);
-  background:linear-gradient(38deg, #09097e 24%, #510074 100%);
+  background: rgb(9, 9, 126);
+  background: linear-gradient(38deg, #09097e 24%, #510074 100%);
   position: relative;
   display: grid;
   grid-template-rows: 1fr auto;
@@ -93,13 +163,17 @@ export default {
       &__block {
         min-height: 460px;
         border-radius: 30px;
-        border: 2px dashed rgba(255,255,255, 0.3);
+        border: 2px dashed rgba(255, 255, 255, 0.3);
         padding: 40px 30px;
-        background-image: url("~/assets/man.png");
+        // background-image: url('~/assets/man.png');
         background-repeat: no-repeat;
         background-position: 50px 50px;
         background-size: 200px;
-        .block-elements{
+        .img-size {
+          width: 300px;
+          height: 300px;
+        }
+        .block-elements {
           .element-title {
             font-size: 75px;
             line-height: 66px;
@@ -121,7 +195,7 @@ export default {
           }
         }
       }
-      &__description{
+      &__description {
         .des-buttons {
           display: grid;
           grid-template-columns: auto 1fr 1fr;
@@ -135,7 +209,7 @@ export default {
               align-items: center;
               font-size: 24px;
               &:after {
-                content: url("~/assets/eth.png");
+                content: url('~/assets/eth.png');
                 margin-left: 4px;
               }
             }
@@ -144,10 +218,10 @@ export default {
             }
           }
           .buy-now {
-              background: #090069;
-              padding: 18px;
-              border-radius: 12px;
-              text-align: center;
+            background: #090069;
+            padding: 18px;
+            border-radius: 12px;
+            text-align: center;
           }
           .place-bid {
             background: #ff2dac;
@@ -160,7 +234,7 @@ export default {
           .history-title {
             font-size: 32px;
             font-weight: bold;
-            font-family: "Bungee", cursive;
+            font-family: 'Bungee', cursive;
             color: white;
           }
           .history-item {
@@ -183,7 +257,6 @@ export default {
               &-image {
                 width: 40px;
                 height: auto;
-
               }
               &-content {
                 display: flex;
@@ -209,7 +282,7 @@ export default {
     }
   }
   @media screen and (max-width: 768px) {
-    background:linear-gradient(38deg, #09097e 80%, #af00ff 100%);
+    background: linear-gradient(38deg, #09097e 80%, #af00ff 100%);
     .page-background-text {
       display: none;
     }
@@ -222,7 +295,6 @@ export default {
         }
       }
     }
-
   }
 }
 .buttons-mobile {
