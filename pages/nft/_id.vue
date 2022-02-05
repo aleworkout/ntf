@@ -100,7 +100,7 @@ export default {
       metadata: 'connect wallet',
       address: 'connect wallet',
       image:
-        'https://github.com/aleworkout/eth-commands/blob/9301907fdab3302fa41f3201c8296746be530687/man.png',
+        'https://zgiizmhvja6iuvd4rufqcnu2ld4xcpfk7xdafyfqdavt4efa3e4a.arweave.net/yZCMsPVIPIpUfI0LATaaWPlxPKr9xgLgsBgrPhCg2Tg',
       base_nft:
         'https://opensea.io/assets/matic/0x81073b56960467c8c356a377bfafcb080d024a2e/',
     }
