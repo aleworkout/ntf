@@ -100,7 +100,7 @@
 export default {
   data() {
     return {
-      text: '',
+      text: 'Wallet',
       connected: 0,
       isConnected: '',
       owner: '',
@@ -130,14 +130,14 @@ export default {
         return
       }
     },
-    checkConnection() {
-      console.log(this.$accounts)
-      if (this.$accounts.length === 0) {
-        this.text = 'Connect Wallet'
-      } else {
-        this.text = 'Connected'
-      }
-    },
+    // checkConnection() {
+    //   console.log(this.$accounts)
+    //   if (this.$accounts.length === 0) {
+    //     this.text = 'Connect Wallet'
+    //   } else {
+    //     this.text = 'Connected'
+    //   }
+    // },
     async loadInfo() {
       //Load Token Info:
       //--------------------------------1.Traz o Owner do Token
