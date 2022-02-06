@@ -9,8 +9,8 @@
         <a href="/home">Contacts</a>
       </div>
       <div>
-        <button @click="connect()" class="save-buttons__save">
-          Connect Wallet
+        <button @click="initWeb3()" class="save-buttons__save">
+          {{ text }}
         </button>
       </div>
       <div class="about-block">
@@ -44,14 +44,18 @@
             <!-- <nuxt-link to="#" class="buy-now buttons-mobile"
               >Buy now!</nuxt-link
             > -->
-            <nuxt-link to="/editor" class="place-bid buttons-mobile"
+
+            <nuxt-link
+              v-if="text === 'Connected'"
+              to="/editor"
+              class="place-bid buttons-mobile"
               >Editor</nuxt-link
             >
           </div>
           <div class="history">
             <div class="history-item">
               <p>
-                Owner: <span>{{ account[0] }}</span>
+                Owner: <span>{{ owner }}</span>
               </p>
               <p>
                 Contract Address: <span>{{ address }}</span>
@@ -96,6 +100,10 @@
 export default {
   data() {
     return {
+      text: '',
+      connected: 0,
+      isConnected: '',
+      owner: '',
       tokenIds: [],
       account: ['connect wallet'],
       metadata: 'connect wallet',
@@ -103,54 +111,56 @@ export default {
       image:
         'https://zgiizmhvja6iuvd4rufqcnu2ld4xcpfk7xdafyfqdavt4efa3e4a.arweave.net/yZCMsPVIPIpUfI0LATaaWPlxPKr9xgLgsBgrPhCg2Tg',
       base_nft:
-        'https://opensea.io/assets/matic/0x81073b56960467c8c356a377bfafcb080d024a2e/',
+        'https://testnets.opensea.io/assets/0x4f2469ae3f2aab4ce51ccff3c0f446a1fa427723/',
     }
+  },
+  mounted() {
+    this.loadInfo()
+    this.checkConnection()
   },
   name: 'nftAbout',
   methods: {
-    async getTokens() {
-      // console.log(this.tokenIds)
-      // console.log(this.$accounts)
-      console.log(this.account[0])
+    async initWeb3() {
       try {
-        let result = await this.$contract.methods
-          .walletOfHolder(this.account[0])
-          .call()
-        this.tokenIds = result
-        console.log('result')
-        console.log(result)
+        // Ask to connect
+        await window.ethereum.send('eth_requestAccounts')
       } catch (error) {
-        console.log('Verify you are connected to the right network')
-        console.log(error)
+        // User denied account access
+        console.error('User denied web3 access', error)
+        return
       }
-
-      console.log('tokens do owner')
-      console.log(typeof this.tokenIds[0])
-      console.log('route')
-      console.log(typeof this.$route.params.id)
     },
-    async connect() {
-      this.getTokens()
-      console.log(this.$route.params.id)
-      console.log()
-      console.log('Current Block Number')
-      this.$web3.eth.getBlockNumber().then(console.log)
+    checkConnection() {
+      console.log(this.$accounts)
+      if (this.$accounts.length === 0) {
+        this.text = 'Connect Wallet'
+      } else {
+        this.text = 'Connected'
+      }
+    },
+    async loadInfo() {
+      //Load Token Info:
+      //--------------------------------1.Traz o Owner do Token
+      const get_owner = await this.$contract.methods
+        .ownerOf(this.$route.params.id)
+        .call()
+      this.owner = get_owner
+      //--------------------------------
+      //--------------------------------2.Traz a URI do Token
       const val = await this.$contract.methods
         .tokenURI(this.$route.params.id)
         .call()
-      console.log(val)
-
+      this.metadata = val
+      //--------------------------------
+      //--------------------------------3.Traz o Contract Address
       this.address = await this.$contract._address
-
+      //--------------------------------
+      //--------------------------------4.Traz a Imagem
       const image = await this.$axios.$get(
         `https://arweave.net/${val.slice(5)}`
       )
       this.image = image.image
-      this.metadata = val
-      this.account = this.$accounts
-
-      console.log(image.image)
-      console.log(this.$accounts)
+      //--------------------------------
     },
   },
 }

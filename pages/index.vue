@@ -9,6 +9,11 @@
         <a href="/home">FAQ</a>
         <a href="/home">Contacts</a>
       </div>
+      <div>
+        <button @click="initWeb3()" class="save-buttons__save">
+          {{ text }}
+        </button>
+      </div>
       <div class="main">
         <h1 class="title">
           <span>10</span> UNIQUE <br />
@@ -59,15 +64,36 @@
 export default {
   data() {
     return {
+      text: '',
+      connected: 0,
       tokens: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
       images: [],
       image:
         'https://zgiizmhvja6iuvd4rufqcnu2ld4xcpfk7xdafyfqdavt4efa3e4a.arweave.net/yZCMsPVIPIpUfI0LATaaWPlxPKr9xgLgsBgrPhCg2Tg',
     }
   },
+  mounted() {
+    this.reqURIs()
+    this.checkConnection()
+  },
   methods: {
-    mounted() {
-      this.reqURIs()
+    async initWeb3() {
+      try {
+        // Ask to connect
+        await window.ethereum.send('eth_requestAccounts')
+      } catch (error) {
+        // User denied account access
+        console.error('User denied web3 access', error)
+        return
+      }
+    },
+    checkConnection() {
+      console.log(this.$accounts)
+      if (this.$accounts.length === 0) {
+        this.text = 'Connect Wallet'
+      } else {
+        this.text = 'Connected'
+      }
     },
     async reqURIs() {
       try {

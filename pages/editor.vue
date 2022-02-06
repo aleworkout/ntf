@@ -8,6 +8,11 @@
         <a href="/home">FAQ</a>
         <a href="/home">Contacts</a>
       </div>
+      <div>
+        <button @click="initWeb3()" class="save-buttons__save">
+          {{ text }}
+        </button>
+      </div>
       <div class="about-block">
         <popup v-if="walletPopup">
           <wallet @setWalletKey="setWalletKey" @walletClose="walletClose" />
@@ -106,7 +111,7 @@
             </div>
             <div v-if="loading === false" class="save-buttons">
               <button @click="uploadFileToArweave()" class="save-buttons__save">
-                Save and close
+                Update Token Layout
               </button>
               <button class="save-buttons__cancel">Cancel</button>
             </div>
@@ -159,6 +164,7 @@ export default {
   },
   data() {
     return {
+      text: '',
       //ALERT/Option
       selected: '',
       // Inicializa PopUps
@@ -199,6 +205,7 @@ export default {
     console.log('created no editor')
   },
   mounted() {
+    this.checkConnection()
     this.account = this.$accounts
     console.log('abaixo a conta')
     console.log(this.account)
@@ -206,6 +213,24 @@ export default {
     this.getTokens()
   },
   methods: {
+    async initWeb3() {
+      try {
+        // Ask to connect
+        await window.ethereum.send('eth_requestAccounts')
+      } catch (error) {
+        // User denied account access
+        console.error('User denied web3 access', error)
+        return
+      }
+    },
+    checkConnection() {
+      console.log(this.$accounts)
+      if (this.$accounts.length === 0) {
+        this.text = 'Connect Wallet'
+      } else {
+        this.text = 'Connected'
+      }
+    },
     async getTokens() {
       // console.log(this.tokenIds)
       // console.log(this.$accounts)
@@ -305,7 +330,7 @@ export default {
       //transactionId
       var txid = this.transactionInfo.transactionId.toString()
       var part1 =
-        '{\n    "name": "First Permanent NFT (para valer valer)",\n    "description": "Description for tiles collection",\n    "fee_recipient": "",\n    "seller_fee_basis_points": 250,\n'
+        '{\n    "name": "Tile",\n    "description": "Description for tiles collection",\n    "fee_recipient": "",\n    "seller_fee_basis_points": 250,\n'
       var part2 = '"image":' + '"https://arweave.net/' + txid + '"'
       var part3 =
         ',\n    "external_url": "",\n    "attributes": [\n        {\n            "trait_type": "Bg Exports",\n            "value": "Wd Nft"\n        },\n        {\n            "trait_type": "Heads Png",\n            "value": "Wd 0014 Wdhead18"\n        },\n        {\n            "trait_type": "Bodies Png",\n            "value": "Wd 0000 Wdbody10"\n        },\n        {\n            "trait_type": "Front Png",\n            "value": "Wd Front 0002 Wd Front 0001 Wd 0035 Wdfront1"\n        }\n    ],\n    "hash": "ea318b62ef4c54dea0e82999c655a5da",\n    "edition": "1"\n}'
