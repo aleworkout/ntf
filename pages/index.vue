@@ -102,7 +102,7 @@ export default {
           console.log(val)
           this.images.append(val)
         })
-      } catch {
+      } catch (error) {
         console.log('error getting uri for images')
         console.log(error)
         this.images = [

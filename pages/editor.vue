@@ -164,7 +164,7 @@ export default {
   },
   data() {
     return {
-      text: '',
+      text: 'Wallet',
       //ALERT/Option
       selected: '',
       // Inicializa PopUps
@@ -223,14 +223,14 @@ export default {
         return
       }
     },
-    checkConnection() {
-      console.log(this.$accounts)
-      if (this.$accounts.length === 0) {
-        this.text = 'Connect Wallet'
-      } else {
-        this.text = 'Connected'
-      }
-    },
+    // checkConnection() {
+    //   console.log(this.$accounts)
+    //   if (this.$accounts.length === 0) {
+    //     this.text = 'Connect Wallet'
+    //   } else {
+    //     this.text = 'Connected'
+    //   }
+    // },
     async getTokens() {
       // console.log(this.tokenIds)
       // console.log(this.$accounts)
