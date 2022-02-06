@@ -205,11 +205,11 @@ export default {
     console.log('created no editor')
   },
   mounted() {
-    this.checkConnection()
-    this.account = this.$accounts
-    console.log('abaixo a conta')
-    console.log(this.account)
-    console.log('tokens of owner')
+    // this.checkConnection()
+    // this.account = this.$accounts
+    // console.log('abaixo a conta')
+    // console.log(this.account)
+    // console.log('tokens of owner')
     this.getTokens()
   },
   methods: {
@@ -233,11 +233,11 @@ export default {
     // },
     async getTokens() {
       // console.log(this.tokenIds)
-      // console.log(this.$accounts)
-      console.log(this.account[0])
+      console.log('this.$accounts[0]')
+      console.log(this.$accounts[0])
       try {
         let result = await this.$contract.methods
-          .walletOfHolder(this.account[0])
+          .walletOfHolder(this.$accounts[0])
           .call()
         this.tokenIds = result
         console.log(result)
